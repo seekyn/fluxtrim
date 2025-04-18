@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>图片压缩工具</title>
+    <link rel="stylesheet" href="css/style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.7.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+</head>
+<body>
+    <!-- 语言切换按钮 -->
+    <div class="language-switch">
+        <button class="lang-btn active" data-lang="zh">中文</button>
+        <button class="lang-btn" data-lang="en">English</button>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1 class="i18n" data-i18n="title">图片压缩工具</h1>
+            <p class="i18n" data-i18n="subtitle">简单、快速地压缩您的图片</p>
+        </header>
+
+        <main>
+            <div class="tab-container">
+                <div class="tab-buttons">
+                    <button class="tab-btn active" data-tab="compress">
+                        <span class="i18n" data-i18n="compress">图片压缩</span>
+                    </button>
+                    <button class="tab-btn" data-tab="convert">
+                        <span class="i18n" data-i18n="convert">HEIC转换</span>
+                    </button>
+                    <button class="tab-btn" data-tab="resize">
+                        <span class="i18n" data-i18n="resize">批量调整尺寸</span>
+                    </button>
+                    <button class="tab-btn" data-tab="ocr">
+                        <span class="i18n" data-i18n="ocr">文字识别</span>
+                    </button>
+                    <button class="tab-btn" data-tab="erase">
+                        <span class="i18n" data-i18n="erase">文字抹除</span>
+                    </button>
+                    <button class="tab-btn" data-tab="convert-pdf">
+                        <span class="i18n" data-i18n="convertPdf">PDF转换</span>
+                    </button>
+                </div>
+            </div>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="compressPane">
+                    <!-- 上传区域 -->
+                    <div class="upload-area" id="uploadArea">
+                        <input type="file" id="imageInput" accept="image/png,image/jpeg" hidden>
+                        <div class="upload-box">
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            <p>点击或拖拽图片到这里</p>
+                            <p class="sub-text">支持 PNG、JPG 格式</p>
+                        </div>
+                    </div>
+
+                    <!-- 预览区域 -->
+                    <div class="preview-container" id="previewContainer" style="display: none;">
+                        <div class="preview-box">
+                            <h3>原图</h3>
+                            <div class="image-container">
+                                <img id="originalImage" alt="原图预览">
+                            </div>
+                            <div class="file-info">
+                                <span>文件大小：</span>
+                                <span id="originalSize">0 KB</span>
+                            </div>
+                            <div class="file-info">
+                                <span>尺寸：</span>
+                                <span id="originalDimensions">0 x 0</span>
+                            </div>
+                        </div>
+
+                        <div class="preview-box">
+                            <h3>处理后</h3>
+                            <div class="image-container">
+                                <img id="compressedImage" alt="压缩后预览">
+                            </div>
+                            <div class="file-info">
+                                <span>文件大小：</span>
+                                <span id="compressedSize">0 KB</span>
+                            </div>
+                            <div class="file-info">
+                                <span>尺寸：</span>
+                                <span id="compressedDimensions">0 x 0</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 控制面板 -->
+                    <div class="control-panel" id="controlPanel" style="display: none;">
+                        <!-- 调整大小选项 -->
+                        <div class="resize-section">
+                            <h3>重设大小</h3>
+                            
+                            <!-- 调整模式选择 -->
+                            <div class="resize-mode-selector">
+                                <label class="radio-container">
+                                    <input type="radio" name="resizeMode" value="pixels" checked id="pixelMode">
+                                    <span class="radio-label">像素</span>
+                                </label>
+                                <label class="radio-container">
+                                    <input type="radio" name="resizeMode" value="percentage" id="percentMode">
+                                    <span class="radio-label">百分比</span>
+                                </label>
+                            </div>
+                            
+                            <!-- 宽度和高度设置 -->
+                            <div class="dimension-inputs-container">
+                                <div class="dimension-group">
+                                    <label for="widthInput">宽度 (px)</label>
+                                    <input type="number" id="widthInput" class="dimension-input">
+                                </div>
+                                
+                                <div class="link-dimension">
+                                    <button id="linkDimensions" class="link-button">
+                                        <span class="link-icon">🔗</span>
+                                    </button>
+                                </div>
+                                
+                                <div class="dimension-group">
+                                    <label for="heightInput">高度 (px)</label>
+                                    <input type="number" id="heightInput" class="dimension-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="quality-control">
+                            <label for="qualitySlider">压缩质量：<span id="qualityValue">80%</span></label>
+                            <input type="range" id="qualitySlider" min="1" max="100" value="80">
+                        </div>
+
+                        <!-- 文件类型选择 -->
+                        <div class="format-control">
+                            <label for="fileTypeSelect">文件类型</label>
+                            <select id="fileTypeSelect" class="file-type-select">
+                                <option value="image/jpeg">JPG</option>
+                                <option value="image/png">PNG</option>
+                                <option value="image/webp">WebP</option>
+                            </select>
+                        </div>
+                        
+                        <button id="downloadBtn" class="download-btn">下载处理后的图片</button>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="convertPane">
+                    <div class="upload-area" id="heicUploadArea">
+                        <input type="file" id="heicInput" accept=".heic,.HEIC" hidden>
+                        <div class="upload-box">
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            <p>点击或拖拽HEIC图片到这里</p>
+                            <p class="sub-text">支持 HEIC 格式</p>
+                        </div>
+                    </div>
+
+                    <div class="preview-container" id="heicPreviewContainer" style="display: none;">
+                        <div class="preview-box full-width">
+                            <h3>预览</h3>
+                            <div class="image-container">
+                                <img id="convertedImage" alt="转换后预览">
+                            </div>
+                            <div class="file-info">
+                                <span>原始格式：HEIC</span>
+                                <span class="spacer">|</span>
+                                <span>转换格式：JPG</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="control-panel" id="convertControlPanel" style="display: none;">
+                        <button id="convertDownloadBtn" class="download-btn">下载JPG图片</button>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="resizePane">
+                    <div class="upload-area" id="resizeUploadArea">
+                        <input type="file" id="resizeImageInput" accept="image/png,image/jpeg" multiple hidden>
+                        <div class="upload-box">
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            <p>点击或拖拽多张图片到这里</p>
+                            <p class="sub-text">支持 PNG、JPG 格式</p>
+                        </div>
+                    </div>
+
+                    <div class="resize-control-panel" id="resizeControlPanel" style="display: none;">
+                        <div class="resize-options">
+                            <div class="resize-mode">
+                                <label>调整方式：</label>
+                                <select id="resizeMode">
+                                    <option value="percentage">按百分比缩放</option>
+                                    <option value="width">指定宽度</option>
+                                    <option value="height">指定高度</option>
+                                    <option value="both">指定宽度和高度</option>
+                                </select>
+                            </div>
+                            
+                            <div class="resize-values">
+                                <div class="percentage-input" id="percentageInput">
+                                    <label>缩放比例：</label>
+                                    <input type="number" id="scalePercentage" value="50" min="1" max="200">
+                                    <span>%</span>
+                                </div>
+                                
+                                <div class="dimension-inputs" id="dimensionInputs" style="display: none;">
+                                    <div class="width-input">
+                                        <label>宽度：</label>
+                                        <input type="number" id="targetWidth" min="1">
+                                        <span>px</span>
+                                    </div>
+                                    <div class="height-input">
+                                        <label>高度：</label>
+                                        <input type="number" id="targetHeight" min="1">
+                                        <span>px</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="maintain-ratio">
+                                <input type="checkbox" id="maintainRatio" checked>
+                                <label for="maintainRatio">保持宽高比</label>
+                            </div>
+
+                            <div class="save-options">
+                                <div class="save-option-item">
+                                    <label>保存文件夹名称：</label>
+                                    <input type="text" id="folderName" value="resized_images" 
+                                           placeholder="输入文件夹名称">
+                                </div>
+                                <div class="save-option-item">
+                                    <label>文件名前缀：</label>
+                                    <input type="text" id="filePrefix" value="resized_"
+                                           placeholder="输入文件名前缀">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="image-list" id="imageList">
+                            <!-- 图片列表将通过JavaScript动态添加 -->
+                        </div>
+
+                        <button id="resizeAllBtn" class="download-btn">开始调整并下载</button>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="ocrPane">
+                    <div class="upload-area" id="ocrUploadArea">
+                        <input type="file" id="ocrImageInput" accept="image/*" hidden>
+                        <div class="upload-box">
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            <p class="i18n" data-i18n="dropImageOcr">上传图片进行文字识别</p>
+                            <p class="sub-text i18n" data-i18n="supportFormatOcr">支持各种图片格式</p>
+                        </div>
+                    </div>
+
+                    <div class="ocr-container" id="ocrContainer" style="display: none;">
+                        <div class="ocr-preview">
+                            <h3 class="i18n" data-i18n="originalImage">原始图片</h3>
+                            <div class="image-container">
+                                <img id="ocrImage" alt="OCR图片预览">
+                            </div>
+                        </div>
+                        
+                        <div class="ocr-result">
+                            <div class="ocr-controls">
+                                <select id="ocrLang">
+                                    <option value="eng">English</option>
+                                    <option value="chi_sim">简体中文</option>
+                                    <option value="chi_tra">繁体中文</option>
+                                </select>
+                                <button id="startOcrBtn" class="action-btn">
+                                    <span class="i18n" data-i18n="startOcr">开始识别</span>
+                                </button>
+                            </div>
+                            
+                            <div class="result-container">
+                                <h3 class="i18n" data-i18n="recognizedText">识别结果</h3>
+                                <div class="loading-indicator" style="display: none;">
+                                    <div class="spinner"></div>
+                                    <p class="i18n" data-i18n="recognizing">正在识别中...</p>
+                                </div>
+                                <textarea id="ocrResult" readonly></textarea>
+                                <button id="copyOcrBtn" class="action-btn">
+                                    <span class="i18n" data-i18n="copyText">复制文本</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="erasePane">
+                    <div class="upload-area" id="eraseUploadArea">
+                        <input type="file" id="eraseImageInput" accept="image/*" hidden>
+                        <div class="upload-box">
+                            <svg class="upload-icon" viewBox="0 0 24 24">
+                                <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                            </svg>
+                            <p class="i18n" data-i18n="dropImageErase">上传需要抹除文字的图片</p>
+                            <p class="sub-text i18n" data-i18n="supportFormatErase">支持各种图片格式</p>
+                        </div>
+                    </div>
+
+                    <div class="erase-container" id="eraseContainer" style="display: none;">
+                        <div class="erase-controls">
+                            <div class="brush-controls">
+                                <label for="brushSize">笔刷大小：</label>
+                                <input type="range" id="brushSize" min="5" max="50" value="20">
+                                <span id="brushSizeValue">20px</span>
+                            </div>
+                            <div class="brush-controls">
+                                <label for="brushSoftness">笔刷柔和度：</label>
+                                <input type="range" id="brushSoftness" min="0" max="100" value="50">
+                                <span id="brushSoftnessValue">50%</span>
+                            </div>
+                            <button id="undoBtn" class="action-btn" disabled>撤销</button>
+                            <button id="redoBtn" class="action-btn" disabled>重做</button>
+                            <button id="resetBtn" class="action-btn">重置</button>
+                        </div>
+                        
+                        <div class="canvas-container">
+                            <canvas id="eraseCanvas"></canvas>
+                        </div>
+                        
+                        <div class="erase-actions">
+                            <button id="downloadEraseBtn" class="download-btn">下载处理后的图片</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="tab-pane" id="convert-pdfPane">
+                    <div class="pdf-converter">
+                        <div class="conversion-type-selector">
+                            <label for="conversionType" class="i18n" data-i18n="selectConversionType">选择转换类型：</label>
+                            <select id="conversionType" class="conversion-select">
+                                <optgroup label="PDF转换为其他格式">
+                                    <option value="pdf2word">PDF转Word</option>
+                                    <option value="pdf2excel">PDF转Excel</option>
+                                    <option value="pdf2ppt">PDF转PPT</option>
+                                    <option value="pdf2jpg">PDF转JPG</option>
+                                </optgroup>
+                                <optgroup label="其他格式转换为PDF">
+                                    <option value="word2pdf">Word转PDF</option>
+                                    <option value="excel2pdf">Excel转PDF</option>
+                                    <option value="ppt2pdf">PPT转PDF</option>
+                                    <option value="jpg2pdf">JPG转PDF</option>
+                                </optgroup>
+                            </select>
+                        </div>
+
+                        <div class="upload-area" id="pdfUploadArea">
+                            <input type="file" id="pdfFileInput" hidden>
+                            <div class="upload-box">
+                                <svg class="upload-icon" viewBox="0 0 24 24">
+                                    <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                                </svg>
+                                <p class="i18n" data-i18n="dropFile">点击或拖拽文件到这里</p>
+                                <p class="sub-text i18n" data-i18n="supportFileFormat">支持的格式会根据转换类型自动更新</p>
+                            </div>
+                        </div>
+
+                        <div class="conversion-preview" id="conversionPreview" style="display: none;">
+                            <div class="preview-info">
+                                <h3 class="i18n" data-i18n="fileInfo">文件信息</h3>
+                                <div class="file-details">
+                                    <p><span class="i18n" data-i18n="fileName">文件名：</span><span id="fileName"></span></p>
+                                    <p><span class="i18n" data-i18n="fileSize">文件大小：</span><span id="fileSize"></span></p>
+                                    <p><span class="i18n" data-i18n="fileType">文件类型：</span><span id="fileType"></span></p>
+                                </div>
+                            </div>
+                            
+                            <div class="conversion-progress" style="display: none;">
+                                <div class="progress-bar">
+                                    <div class="progress-fill"></div>
+                                </div>
+                                <p class="progress-text i18n" data-i18n="converting">正在转换中...</p>
+                            </div>
+                            
+                            <button id="startConversionBtn" class="action-btn">
+                                <span class="i18n" data-i18n="startConversion">开始转换</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="https://unpkg.com/heic2any"></script>
+    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
+    <script src="js/device-detect.js"></script>
+    <script src="js/i18n.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html> 

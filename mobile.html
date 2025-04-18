@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>图片压缩工具</title>
+    <link rel="stylesheet" href="css/mobile.css">
+    <script src="https://unpkg.com/heic2any"></script>
+</head>
+<body>
+    <div class="mobile-container">
+        <header>
+            <h1>图片压缩工具</h1>
+            <p>简单、快速地压缩您的图片</p>
+        </header>
+
+        <!-- 功能选择器 -->
+        <div class="function-switcher">
+            <button class="switch-btn active" data-function="compress">图片压缩</button>
+            <button class="switch-btn" data-function="heic">HEIC转换</button>
+        </div>
+
+        <!-- 压缩功能区域 -->
+        <div class="function-panel active" id="compressPanel">
+            <div class="upload-area" id="mobileUploadArea">
+                <input type="file" id="mobileImageInput" accept="image/png,image/jpeg" capture="camera" hidden>
+                <div class="upload-box">
+                    <svg class="upload-icon" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    <p>点击拍照或选择图片</p>
+                    <p class="sub-text">支持 PNG、JPG 格式</p>
+                </div>
+            </div>
+
+            <div class="preview-section" id="mobilePreviewSection" style="display: none;">
+                <div class="preview-card">
+                    <h3>原图</h3>
+                    <div class="image-container">
+                        <img id="mobileOriginalImage" alt="原图预览">
+                    </div>
+                    <div class="file-info">
+                        <span>文件大小：</span>
+                        <span id="mobileOriginalSize">0 KB</span>
+                    </div>
+                </div>
+
+                <div class="preview-card">
+                    <h3>压缩后</h3>
+                    <div class="image-container">
+                        <img id="mobileCompressedImage" alt="压缩后预览">
+                    </div>
+                    <div class="file-info">
+                        <span>文件大小：</span>
+                        <span id="mobileCompressedSize">0 KB</span>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <div class="quality-control">
+                        <label for="mobileQualitySlider">压缩质量：<span id="mobileQualityValue">80%</span></label>
+                        <input type="range" id="mobileQualitySlider" min="1" max="100" value="80">
+                    </div>
+                    <button id="mobileDownloadBtn" class="download-btn">下载压缩后的图片</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- HEIC转换功能区域 -->
+        <div class="function-panel" id="heicPanel">
+            <div class="upload-area" id="mobileHeicUploadArea">
+                <input type="file" id="mobileHeicInput" accept=".heic,.HEIC" capture="camera" hidden>
+                <div class="upload-box">
+                    <svg class="upload-icon" viewBox="0 0 24 24">
+                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+                    </svg>
+                    <p>点击选择HEIC图片</p>
+                    <p class="sub-text">支持 HEIC 格式</p>
+                </div>
+            </div>
+
+            <div class="preview-section" id="mobileHeicPreviewSection" style="display: none;">
+                <div class="preview-card full-width">
+                    <h3>转换预览</h3>
+                    <div class="image-container">
+                        <img id="mobileConvertedImage" alt="转换后预览">
+                    </div>
+                    <div class="file-info">
+                        <span>原始格式：HEIC</span>
+                        <span class="spacer">|</span>
+                        <span>转换格式：JPG</span>
+                    </div>
+                </div>
+
+                <div class="control-panel">
+                    <button id="mobileConvertDownloadBtn" class="download-btn">下载JPG图片</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="js/mobile.js"></script>
+</body>
+</html> 
