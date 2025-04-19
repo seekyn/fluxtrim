@@ -69,6 +69,19 @@ body {
     color: white;
 }
 
+/* Logo样式 */
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 1rem;
+}
+
+.logo {
+  width: 200px;
+  height: auto;
+  margin-bottom: 5px;
+}
+
 /* 头部样式 */
 header {
   margin-bottom: 30px;
@@ -581,91 +594,39 @@ canvas#eraseCanvas {
 
 /* PDF转换功能样式 */
 .pdf-converter {
-  background-color: var(--white);
-  border-radius: var(--border-radius);
-  box-shadow: var(--shadow);
-  padding: var(--card-padding);
+  display: none;
 }
 
 .conversion-type-selector {
-  margin-bottom: 25px;
-}
-
-.conversion-type-selector label {
-  display: block;
-  margin-bottom: 8px;
-  color: var(--gray-700);
-  font-size: 0.9rem;
+  display: none;
 }
 
 .conversion-select {
-  width: 100%;
-  padding: 12px 15px;
-  border: 1px solid var(--gray-300);
-  border-radius: var(--border-radius);
-  font-size: 1rem;
-  background-color: var(--white);
-  color: var(--gray-800);
-  transition: var(--transition);
-  cursor: pointer;
-}
-
-.conversion-select:focus {
-  border-color: var(--primary-color);
-  outline: none;
-  box-shadow: 0 0 0 3px rgba(44, 107, 237, 0.15);
+  display: none;
 }
 
 .conversion-preview {
-  margin-top: 30px;
+  display: none;
 }
 
 .preview-info {
-  margin-bottom: 25px;
-}
-
-.preview-info h3 {
-  font-size: 1.2rem;
-  margin-bottom: 15px;
-  color: var(--gray-800);
-  font-weight: 600;
-}
-
-.file-details p {
-  margin-bottom: 8px;
-  display: flex;
-}
-
-.file-details p span:first-child {
-  font-weight: 500;
-  min-width: 100px;
-  color: var(--gray-700);
+  display: none;
 }
 
 .conversion-progress {
-  margin-bottom: 25px;
+  display: none;
 }
 
 .progress-bar {
-  height: 10px;
-  background-color: var(--gray-200);
-  border-radius: 10px;
-  overflow: hidden;
-  margin-bottom: 10px;
+  display: none;
 }
 
 .progress-fill {
-  height: 100%;
-  background-color: var(--primary-color);
-  border-radius: 10px;
-  width: 0;
-  transition: width 0.3s ease;
+  display: none;
 }
 
 .progress-text {
-  font-size: 0.9rem;
-  color: var(--gray-600);
-  text-align: center;
+  display: none;
 }
 
 /* Image List for Batch Processing */
