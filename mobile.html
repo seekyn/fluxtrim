@@ -1,103 +1,192 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>图片压缩工具</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Image Processing Suite - Mobile</title>
     <link rel="stylesheet" href="css/mobile.css">
-    <script src="https://unpkg.com/heic2any"></script>
 </head>
 <body>
-    <div class="mobile-container">
+    <div class="container">
         <header>
-            <h1>图片压缩工具</h1>
-            <p>简单、快速地压缩您的图片</p>
+            <h1>Advanced Image Processing Suite</h1>
+            <p class="subtitle">Mobile Version</p>
         </header>
 
-        <!-- 功能选择器 -->
-        <div class="function-switcher">
-            <button class="switch-btn active" data-function="compress">图片压缩</button>
-            <button class="switch-btn" data-function="heic">HEIC转换</button>
-        </div>
-
-        <!-- 压缩功能区域 -->
-        <div class="function-panel active" id="compressPanel">
-            <div class="upload-area" id="mobileUploadArea">
-                <input type="file" id="mobileImageInput" accept="image/png,image/jpeg" capture="camera" hidden>
-                <div class="upload-box">
-                    <svg class="upload-icon" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                    <p>点击拍照或选择图片</p>
-                    <p class="sub-text">支持 PNG、JPG 格式</p>
-                </div>
+        <main>
+            <div class="feature-grid">
+                <a href="#" class="feature-card" id="compressBtn">
+                    <div class="feature-icon">📷</div>
+                    <h3>Image Compression</h3>
+                    <p>Optimize images while preserving quality</p>
+                </a>
+                
+                <a href="#" class="feature-card" id="convertBtn">
+                    <div class="feature-icon">🔄</div>
+                    <h3>HEIC Converter</h3>
+                    <p>Convert iPhone photos to standard formats</p>
+                </a>
+                
+                <a href="#" class="feature-card" id="ocrBtn">
+                    <div class="feature-icon">📝</div>
+                    <h3>Text Recognition</h3>
+                    <p>Extract text from images</p>
+                </a>
             </div>
 
-            <div class="preview-section" id="mobilePreviewSection" style="display: none;">
-                <div class="preview-card">
-                    <h3>原图</h3>
+            <div class="mobile-tool" id="compressTool">
+                <div class="tool-header">
+                    <button class="back-btn">&larr; Back</button>
+                    <h2>Image Compression</h2>
+                </div>
+                
+                <div class="upload-area" id="mobileUploadArea">
+                    <input type="file" id="mobileImageInput" accept="image/png,image/jpeg" hidden>
+                    <div class="upload-box">
+                        <div class="upload-icon">+</div>
+                        <p>Tap to select image</p>
+                        <p class="sub-text">Supports PNG, JPG formats</p>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="mobilePreviewContainer" style="display: none;">
+                    <h3>Original</h3>
                     <div class="image-container">
-                        <img id="mobileOriginalImage" alt="原图预览">
+                        <img id="mobileOriginalImage" alt="Original preview">
                     </div>
                     <div class="file-info">
-                        <span>文件大小：</span>
-                        <span id="mobileOriginalSize">0 KB</span>
+                        <div class="info-group">
+                            <span class="info-label">Size:</span>
+                            <span id="mobileOriginalSize">0 KB</span>
+                        </div>
+                        <div class="info-group">
+                            <span class="info-label">Dimensions:</span>
+                            <span id="mobileOriginalDimensions">0 x 0</span>
+                        </div>
+                    </div>
+                    
+                    <div class="control-panel">
+                        <div class="control-group">
+                            <label for="mobileQualitySlider">Quality: <span id="mobileQualityValue">80%</span></label>
+                            <input type="range" id="mobileQualitySlider" min="1" max="100" value="80">
+                        </div>
+                        
+                        <div class="control-group">
+                            <label for="mobileFileType">Output Format</label>
+                            <select id="mobileFileType">
+                                <option value="image/jpeg">JPG</option>
+                                <option value="image/png">PNG</option>
+                                <option value="image/webp">WebP</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <button id="mobileProcessBtn" class="action-btn">Process Image</button>
+                    
+                    <div id="mobileResultContainer" style="display: none;">
+                        <h3>Optimized Result</h3>
+                        <div class="image-container">
+                            <img id="mobileCompressedImage" alt="Compressed preview">
+                        </div>
+                        <div class="file-info">
+                            <div class="info-group">
+                                <span class="info-label">Size:</span>
+                                <span id="mobileCompressedSize">0 KB</span>
+                            </div>
+                            <div class="info-group">
+                                <span class="info-label">Dimensions:</span>
+                                <span id="mobileCompressedDimensions">0 x 0</span>
+                            </div>
+                            <div class="info-group">
+                                <span class="info-label">Reduction:</span>
+                                <span id="mobileSizeReduction">0%</span>
+                            </div>
+                        </div>
+                        
+                        <button id="mobileDownloadBtn" class="download-btn">Download Image</button>
                     </div>
                 </div>
-
-                <div class="preview-card">
-                    <h3>压缩后</h3>
+            </div>
+            
+            <div class="mobile-tool" id="convertTool">
+                <div class="tool-header">
+                    <button class="back-btn">&larr; Back</button>
+                    <h2>HEIC Converter</h2>
+                </div>
+                
+                <div class="upload-area" id="mobileHeicUploadArea">
+                    <input type="file" id="mobileHeicInput" accept=".heic,.HEIC" hidden>
+                    <div class="upload-box">
+                        <div class="upload-icon">+</div>
+                        <p>Tap to select HEIC image</p>
+                        <p class="sub-text">Convert iPhone photos to JPG</p>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="mobileHeicPreviewContainer" style="display: none;">
+                    <h3>Preview</h3>
                     <div class="image-container">
-                        <img id="mobileCompressedImage" alt="压缩后预览">
+                        <img id="mobileConvertedImage" alt="Converted preview">
                     </div>
-                    <div class="file-info">
-                        <span>文件大小：</span>
-                        <span id="mobileCompressedSize">0 KB</span>
-                    </div>
-                </div>
-
-                <div class="control-panel">
-                    <div class="quality-control">
-                        <label for="mobileQualitySlider">压缩质量：<span id="mobileQualityValue">80%</span></label>
-                        <input type="range" id="mobileQualitySlider" min="1" max="100" value="80">
-                    </div>
-                    <button id="mobileDownloadBtn" class="download-btn">下载压缩后的图片</button>
+                    
+                    <button id="mobileHeicDownloadBtn" class="download-btn">Download JPG Image</button>
                 </div>
             </div>
-        </div>
-
-        <!-- HEIC转换功能区域 -->
-        <div class="function-panel" id="heicPanel">
-            <div class="upload-area" id="mobileHeicUploadArea">
-                <input type="file" id="mobileHeicInput" accept=".heic,.HEIC" capture="camera" hidden>
-                <div class="upload-box">
-                    <svg class="upload-icon" viewBox="0 0 24 24">
-                        <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
-                    </svg>
-                    <p>点击选择HEIC图片</p>
-                    <p class="sub-text">支持 HEIC 格式</p>
+            
+            <div class="mobile-tool" id="ocrTool">
+                <div class="tool-header">
+                    <button class="back-btn">&larr; Back</button>
+                    <h2>Text Recognition (OCR)</h2>
                 </div>
-            </div>
-
-            <div class="preview-section" id="mobileHeicPreviewSection" style="display: none;">
-                <div class="preview-card full-width">
-                    <h3>转换预览</h3>
+                
+                <div class="upload-area" id="mobileOcrUploadArea">
+                    <input type="file" id="mobileOcrInput" accept="image/*" hidden>
+                    <div class="upload-box">
+                        <div class="upload-icon">+</div>
+                        <p>Tap to select image</p>
+                        <p class="sub-text">Extract text from any image</p>
+                    </div>
+                </div>
+                
+                <div class="preview-container" id="mobileOcrPreviewContainer" style="display: none;">
+                    <h3>Image</h3>
                     <div class="image-container">
-                        <img id="mobileConvertedImage" alt="转换后预览">
+                        <img id="mobileOcrImage" alt="OCR image preview">
                     </div>
-                    <div class="file-info">
-                        <span>原始格式：HEIC</span>
-                        <span class="spacer">|</span>
-                        <span>转换格式：JPG</span>
+                    
+                    <div class="control-group">
+                        <label for="mobileOcrLang">Language</label>
+                        <select id="mobileOcrLang">
+                            <option value="eng">English</option>
+                            <option value="chi_sim">Simplified Chinese</option>
+                            <option value="chi_tra">Traditional Chinese</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="control-panel">
-                    <button id="mobileConvertDownloadBtn" class="download-btn">下载JPG图片</button>
+                    
+                    <button id="mobileStartOcrBtn" class="action-btn">Recognize Text</button>
+                    
+                    <div class="loading-indicator" id="mobileOcrLoading" style="display: none;">
+                        <div class="spinner"></div>
+                        <p>Processing image...</p>
+                    </div>
+                    
+                    <div id="mobileOcrResultContainer" style="display: none;">
+                        <h3>Recognition Result</h3>
+                        <textarea id="mobileOcrResult" readonly></textarea>
+                        <button id="mobileCopyOcrBtn" class="action-btn">Copy Text</button>
+                    </div>
                 </div>
             </div>
-        </div>
+        </main>
+
+        <footer>
+            <p>Advanced Image Processing Suite &copy; 2023 | All processing happens in your browser</p>
+            <p><a href="index.html" class="desktop-link">Switch to Desktop Version</a></p>
+        </footer>
     </div>
+
+    <script src="https://unpkg.com/heic2any"></script>
+    <script src="https://unpkg.com/tesseract.js@v2.1.0/dist/tesseract.min.js"></script>
     <script src="js/mobile.js"></script>
 </body>
 </html> 
